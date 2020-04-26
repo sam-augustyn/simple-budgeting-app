@@ -1,32 +1,26 @@
 #import only nesscary columns
 $csvFile = './2020budget.csv'
 
-$file = Import-Csv $csvFile | Select-Object -Property Month,Amount,Category,Type
-#import category list
-$categories = Import-Csv $csvFile | select -ExpandProperty Category | Sort-Object -unique
-#import months
-$months = Import-Csv $csvFile | select-Object -ExpandProperty Month | Sort-Object -unique
+$file = Import-Csv $csvFile | Select-Object -Property Month,Amount,Category,Type #import category list
+$categories = Import-Csv $csvFile | select -ExpandProperty Category | Sort-Object -unique #pull all of the categories
+$months = Import-Csv $csvFile | select-Object -ExpandProperty Month | Sort-Object -unique #pull all of the months
 
-#loop through each month
-ForEach($month in $months){
-    $expense = 0
-    $fun = 0
-    #init each month a seperate csv
-    $m = $file | where-Object {$_.Month -eq $month}
-    #write the month to the screen
-    Write-Host "-" $month "-"
-    #loop through each
-    $total = 0
-    ForEach($category in $categories){
-        #get the sum of the category
-        $fun = $m | Where-Object {$_.Type -eq "Fun"} | Select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-        $expense = $m | Where-Object {$_.Type -eq "Expense"} | Select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-        $income = $m | Where-Object {$_.Type -eq ""} | Select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-        $sum = $m | where-Object {$_.Category -eq $category} | select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-        #write the category and its sum to the screen
-        $total = $total + $sum
-        Write-Host $category $sum
+
+ForEach($month in $months){ #loop through each month
+    $expense = 0 #set the "expense counter" -> this is how much you have spent on expenses
+    $fun = 0 #set the "fun counter" -> this is how much you have spent on items not categorized as expenses or income
+    $m = $file | where-Object {$_.Month -eq $month} #pull data for certain months
+    Write-Host "-" $month "-" #write the month to the screen
+    $total = 0 #set the total -> this tells you if you are postive or negative for a month
+    ForEach($category in $categories){ #loop through each category
+        $fun = $m | Where-Object {$_.Type -eq "Fun"} | Select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum #pull the total of fun for the month
+        $expense = $m | Where-Object {$_.Type -eq "Expense"} | Select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum #pull the total of expense for the month
+        $income = $m | Where-Object {$_.Type -eq ""} | Select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum #pull all of the income for the month
+        $sum = $m | where-Object {$_.Category -eq $category} | select-Object -ExpandProperty Amount | Measure-Object -Sum | Select-Object -ExpandProperty Sum #sum is the total for each category that month
+        $total = $total + $sum #add to total to for the month
+        Write-Host $category $sum #write the category and its sum to the screen
     }
+    
     $savings =  [Math]::round($income + $expense + $fun)
     $total = [math]::round($total,2)
     $funT = $fun
