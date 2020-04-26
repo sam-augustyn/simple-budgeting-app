@@ -1,5 +1,5 @@
 #import only nesscary columns
-$csvFile = './2020budget.csv'
+$csvFile = './sample.csv'
 
 $file = Import-Csv $csvFile | Select-Object -Property Month,Amount,Category,Type #import category list
 $categories = Import-Csv $csvFile | select -ExpandProperty Category | Sort-Object -unique #pull all of the categories
