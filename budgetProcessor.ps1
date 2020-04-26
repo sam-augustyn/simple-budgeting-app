@@ -20,19 +20,19 @@ ForEach($month in $months){ #loop through each month
         $total = $total + $sum #add to total to for the month
         Write-Host $category $sum #write the category and its sum to the screen
     }
+
+    $savings = [Math]::round($income + $expense + $fun) #money "leftover" -> This could go to savings
+    $total = [math]::round($total,2) #print the total 
+    $funT = $fun #get the fun total amount
+    $fun =[Math]::Abs($fun)/$income #get the percentage spent that month
+    $expenseT = $expense #get the expense total
+    $expense = [Math]::Abs($expense)/$income #get the percentage spent on expenses that month
     
-    $savings =  [Math]::round($income + $expense + $fun)
-    $total = [math]::round($total,2)
-    $funT = $fun
-    $fun =[Math]::Abs($fun)/$income
-    $expenseT = $expense
-    $expense = [Math]::Abs($expense)/$income
-    
-    Write-host "Monthly Total:" $total
-    Write-host "Fun:", $fun.tostring("P"), " Expense: ",$expense.tostring("P"), " Savings: ", $savings
-    Write-host "Fun:", $funT, " Expense: ", $expenseT
+    Write-host "Monthly Total:" $total #print the monthly total (unspent money)
+    Write-host "Fun:", $fun.tostring("P"), " Expense: ",$expense.tostring("P"), " Savings: ", $savings #write the percentages
+    Write-host "Fun:", $funT, " Expense: ", $expenseT #write the totals
     Write-host ""
-    $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") #pause between each month
 }
 #Write-Host "Press any key to continue..."
 #cat$Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
